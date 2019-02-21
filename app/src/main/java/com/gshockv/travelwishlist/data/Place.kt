@@ -1,4 +1,4 @@
-package com.gshockv.travelwishlist
+package com.gshockv.travelwishlist.data
 
 import android.content.Context
 

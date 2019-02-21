@@ -29,9 +29,12 @@ class MainActivity : AppCompatActivity() {
 
     private val onItemClickListener = object : TravelListAdapter.OnItemClickListener {
         override fun onItemClick(view: View, position: Int) {
-            Toast.makeText(this@MainActivity, "Clicked $position", Toast.LENGTH_SHORT).show()
+            openPlaceDetails(position)
         }
+    }
 
+    private fun openPlaceDetails(position: Int) {
+        startActivity(DetailsActivity.newIntent(this, position))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -1,10 +1,16 @@
 package com.gshockv.travelwishlist
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
+import com.gshockv.travelwishlist.data.Place
+import com.gshockv.travelwishlist.data.PlaceData
+import com.gshockv.travelwishlist.data.imageResourceId
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_places.view.*
 
@@ -39,9 +45,21 @@ class TravelListAdapter(private var context: Context) : RecyclerView.Adapter<Tra
 
         fun bind (place: Place) = with(itemView) {
             placeName.text = place.name
+            val imageResourceId = place.imageResourceId(context)
             Picasso.with(context)
-                .load(place.imageResourceId(context))
+                .load(imageResourceId)
                 .into(placeImage)
+            applyPlaceholderBackground(itemView, imageResourceId)
+        }
+
+        private fun applyPlaceholderBackground(itemView: View, imageId: Int) {
+            val photo = BitmapFactory.decodeResource(context.resources, imageId)
+            Palette.from(photo).generate { palette ->
+                palette?.let {
+                    val bgColor = it.getMutedColor(ContextCompat.getColor(context, android.R.color.black))
+                    itemView.placeNameHolder.setBackgroundColor(bgColor)
+                }
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.gshockv.travelwishlist
+package com.gshockv.travelwishlist.data
 
 object PlaceData {
 
@@ -22,7 +22,11 @@ object PlaceData {
             if (i == 2 || i == 5) {
                 isFav = true
             }
-            val place = Place(placeNameArray[i], placeNameArray[i].replace("\\s+".toRegex(), "").toLowerCase(), isFav)
+            val place = Place(
+                placeNameArray[i],
+                placeNameArray[i].replace("\\s+".toRegex(), "").toLowerCase(),
+                isFav
+            )
             list.add(place)
         }
         return list
