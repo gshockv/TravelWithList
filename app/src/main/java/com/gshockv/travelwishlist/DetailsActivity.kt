@@ -1,12 +1,18 @@
 package com.gshockv.travelwishlist
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
@@ -14,6 +20,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.palette.graphics.Palette
 import com.gshockv.travelwishlist.data.Place
 import com.gshockv.travelwishlist.data.PlaceData
 import com.gshockv.travelwishlist.data.imageResourceId
@@ -29,10 +36,10 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
 
-    lateinit private var inputManager: InputMethodManager
-    lateinit private var place: Place
-    lateinit private var todoList: ArrayList<String>
-    lateinit private var toDoAdapter: ArrayAdapter<*>
+    private lateinit var inputManager: InputMethodManager
+    private lateinit var place: Place
+    private lateinit var todoList: ArrayList<String>
+    private lateinit var toDoAdapter: ArrayAdapter<*>
 
     private var isEditTextVisible: Boolean = false
     private var defaultColor: Int = 0
@@ -67,7 +74,27 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun addButtonClick() {
+        if (!isEditTextVisible) {
+            revealEditText(revealView)
+            todoText.requestFocus()
+            inputManager.showSoftInput(todoText, InputMethodManager.SHOW_IMPLICIT)
 
+            addButton.setImageResource(R.drawable.icon_morph)
+            val animatable = addButton.drawable as Animatable
+            animatable.start()
+        } else {
+            val text = todoText.text.toString()
+            if (!TextUtils.isEmpty(text)) {
+                addToDo(text)
+                toDoAdapter.notifyDataSetChanged()
+            }
+            inputManager.hideSoftInputFromWindow(todoText.windowToken, 0)
+            hideEditText(revealView)
+
+            addButton.setImageResource(R.drawable.icon_morph_reverse)
+            val animatable = addButton.drawable as Animatable
+            animatable.start()
+        }
     }
 
     private fun setUpAdapter() {
@@ -91,25 +118,51 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun getPhoto() {
         val photo = BitmapFactory.decodeResource(resources, place.imageResourceId(this))
+        colorize(photo)
     }
 
-    private fun colorize(photo: Bitmap) {}
+    private fun colorize(photo: Bitmap) {
+        val palette = Palette.from(photo).generate()
+        applyPalette(palette)
+    }
 
-    private fun applyPalette() {
-
+    private fun applyPalette(palette: Palette) {
+        window.setBackgroundDrawable(ColorDrawable(palette.getDarkMutedColor(defaultColor)))
+        placeNameHolder.setBackgroundColor(palette.getMutedColor(defaultColor))
+        revealView.setBackgroundColor(palette.getLightVibrantColor(defaultColor))
     }
 
     private fun revealEditText(view: LinearLayout) {
+        val cx = view.right - 30
+        val cy = view.bottom - 60
+        val finalRadius = Math.max(view.width, view.height)
 
+        view.visibility = View.VISIBLE
+        isEditTextVisible = true
+
+        val anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0f, finalRadius.toFloat())
+        anim.start()
     }
 
     private fun hideEditText(view: LinearLayout) {
+        val cx = view.right - 30
+        val cy = view.bottom - 60
+        val initialRadius = view.width
 
+        val anim = ViewAnimationUtils.createCircularReveal(view, cx, cy, initialRadius.toFloat(), 0f)
+        anim.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                view.visibility = View.INVISIBLE
+            }
+        })
+        isEditTextVisible = false
+        anim.start()
     }
 
     override fun onBackPressed() {
         val alphaAnimation = AlphaAnimation(1.0f, 0.0f)
-        alphaAnimation.duration = 1000
+        alphaAnimation.duration = 100
         addButton.startAnimation(alphaAnimation)
         alphaAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation) {
