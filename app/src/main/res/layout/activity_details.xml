@@ -11,6 +11,7 @@
 
         <ImageView
                 android:id="@+id/placeImage"
+                android:transitionName="tImage"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:scaleType="centerCrop"/>
@@ -40,6 +41,7 @@
 
         <LinearLayout
                 android:id="@+id/placeNameHolder"
+                android:transitionName="tNameHolder"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@color/primary_dark">

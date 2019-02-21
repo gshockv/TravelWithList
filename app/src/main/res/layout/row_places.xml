@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
+            android:transitionName="tImage"
             tools:src="@drawable/borabora"/>
 
     <!-- Used for the ripple effect on touch -->
@@ -27,6 +28,7 @@
 
     <LinearLayout
             android:id="@+id/placeNameHolder"
+            android:transitionName="tNameHolder"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_gravity="bottom"

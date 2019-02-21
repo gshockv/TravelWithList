@@ -1,12 +1,16 @@
 package com.gshockv.travelwishlist
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
+import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,12 +33,21 @@ class MainActivity : AppCompatActivity() {
 
     private val onItemClickListener = object : TravelListAdapter.OnItemClickListener {
         override fun onItemClick(view: View, position: Int) {
-            openPlaceDetails(position)
+            openPlaceDetails(view, position)
         }
     }
 
-    private fun openPlaceDetails(position: Int) {
-        startActivity(DetailsActivity.newIntent(this, position))
+    private fun openPlaceDetails(view: View, position: Int) {
+        val placeImage = view.findViewById<ImageView>(R.id.placeImage)
+        val placeNameHolder = view.findViewById<LinearLayout>(R.id.placeNameHolder)
+
+        val imagePair = Pair.create(placeImage as View, "tImage")
+        val holderPair = Pair.create(placeNameHolder as View, "tNameHolder")
+
+        val intent = DetailsActivity.newIntent(this, position)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imagePair, holderPair)
+
+        ActivityCompat.startActivity(this, intent, options.toBundle())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

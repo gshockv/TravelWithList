@@ -36,7 +36,7 @@ class TravelListAdapter(private var context: Context) : RecyclerView.Adapter<Tra
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
-            itemView.placeHolder.setOnClickListener(this)
+            itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View) {
