@@ -10,6 +10,7 @@ import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.TextUtils
+import android.transition.Transition
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -109,7 +110,17 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun windowTransition() {
+        window.enterTransition.addListener(object : Transition.TransitionListener {
+            override fun onTransitionEnd(transition: Transition?) {
+                addButton.animate().alpha(1.0f)
+                window.enterTransition.removeListener(this)
+            }
 
+            override fun onTransitionResume(transition: Transition) { }
+            override fun onTransitionPause(transition: Transition) { }
+            override fun onTransitionCancel(transition: Transition) { }
+            override fun onTransitionStart(transition: Transition) { }
+        })
     }
 
     private fun addToDo(todo: String) {
@@ -117,7 +128,8 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun getPhoto() {
-        val photo = BitmapFactory.decodeResource(resources, place.imageResourceId(this))
+        val photo = BitmapFactory.decodeResource(resources,
+            place.imageResourceId(this))
         colorize(photo)
     }
 

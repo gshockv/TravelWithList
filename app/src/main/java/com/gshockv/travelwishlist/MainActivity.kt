@@ -4,14 +4,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.core.util.Pair
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_toolbar.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var menu: Menu
@@ -24,11 +27,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        staggeredGridLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        staggeredGridLayoutManager = StaggeredGridLayoutManager(1,
+            StaggeredGridLayoutManager.VERTICAL)
         recyclerList.layoutManager = staggeredGridLayoutManager
         adapter = TravelListAdapter(this)
         recyclerList.adapter = adapter
         adapter.setOnItemClickListener(onItemClickListener)
+
+        setupToolbar()
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(findViewById(R.id.appToolbar))
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(false)
+            it.setDisplayShowTitleEnabled(true)
+            it.elevation = 8.0f
+        }
     }
 
     private val onItemClickListener = object : TravelListAdapter.OnItemClickListener {
@@ -38,16 +53,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPlaceDetails(view: View, position: Int) {
+        val transitionIntent = DetailsActivity.newIntent(this@MainActivity, position)
         val placeImage = view.findViewById<ImageView>(R.id.placeImage)
         val placeNameHolder = view.findViewById<LinearLayout>(R.id.placeNameHolder)
+
+        val navigationBar = findViewById<View>(android.R.id.navigationBarBackground)
+        val statusBar = findViewById<View>(android.R.id.statusBarBackground)
 
         val imagePair = Pair.create(placeImage as View, "tImage")
         val holderPair = Pair.create(placeNameHolder as View, "tNameHolder")
 
-        val intent = DetailsActivity.newIntent(this, position)
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imagePair, holderPair)
+        val navPair = Pair.create(navigationBar,
+            Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME)
+        val statusPair = Pair.create(statusBar,
+            Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME)
+        val toolbarPair = Pair.create(appToolbar as View, "tActionBar")
 
-        ActivityCompat.startActivity(this, intent, options.toBundle())
+        val pairs = mutableListOf(
+            imagePair,
+            holderPair,
+            statusPair,
+            toolbarPair
+        )
+        if (navigationBar != null && navPair != null) {
+            pairs += navPair
+        }
+
+        val options = ActivityOptionsCompat
+            .makeSceneTransitionAnimation(this@MainActivity, *pairs.toTypedArray())
+        ActivityCompat.startActivity(this@MainActivity, transitionIntent, options.toBundle())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
