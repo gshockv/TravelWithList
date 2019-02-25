@@ -6,3 +6,5 @@ Uses:
 - AndroidX
 - Pallete API
 - Transitions Framework
+
+![App Screenshot](https://github.com/gshockv/TravelWithList/blob/master/app/assets/app_demo_video.gif)
