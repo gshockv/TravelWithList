@@ -1,8 +1,9 @@
 # TravelWithList
 Sample Travel WishList Android App built with Material Components
+
 Uses:
 - Kotlin
-- Material Design Components
+- Material Design Components and Animations
 - AndroidX
 - Pallete API
 - Transitions Framework
