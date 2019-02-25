@@ -7,4 +7,4 @@ Uses:
 - Pallete API
 - Transitions Framework
 
-![App Screenshot](https://github.com/gshockv/TravelWithList/blob/master/app/assets/app_demo_video.gif)
+<img src="https://github.com/gshockv/TravelWithList/blob/master/app/assets/app_demo_video.gif" width="360" />
